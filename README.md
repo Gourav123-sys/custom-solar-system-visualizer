@@ -35,6 +35,10 @@ A responsive web-based 3D solar system simulation built with Three.js. This proj
 
 ## 🚀 Getting Started
 
+### Live Demo
+
+- Visit the live demo: [Solar System Visualizer](https://custom-solar-system-visualizer.vercel.app/)
+
 ### Prerequisites
 
 - Modern web browser with WebGL support
