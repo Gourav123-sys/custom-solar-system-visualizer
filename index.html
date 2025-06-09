@@ -6,12 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D Solar System Simulation</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             overflow: hidden;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             background: #000;
             color: #fff;
+            line-height: 1.6;
         }
 
         #container {
@@ -20,47 +27,116 @@
             left: 0;
             width: 100%;
             height: 100%;
+            z-index: 1;
+        }
+
+        #mobile-controls-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1002;
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        #mobile-controls-toggle:hover {
+            background: rgba(76, 175, 80, 1);
+            transform: translateY(-2px);
         }
 
         #controls {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            border-radius: 10px;
-            max-width: 300px;
-            z-index: 1000;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 25px;
+            border-radius: 15px;
+            max-width: 320px;
+            z-index: 1001;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group h3 {
+            color: #4CAF50;
             margin-bottom: 15px;
+            font-size: 1.2em;
+            font-weight: 600;
         }
 
         .control-group label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             color: #fff;
+            font-size: 0.95em;
+            font-weight: 500;
         }
 
         .control-group input[type="range"] {
             width: 100%;
-            margin: 5px 0;
+            margin: 8px 0;
+            -webkit-appearance: none;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #4CAF50;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         button {
             background: #4CAF50;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 12px 24px;
+            border-radius: 25px;
             cursor: pointer;
-            margin: 5px;
-            transition: background 0.3s;
+            font-size: 0.95em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         button:hover {
             background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
         #theme-toggle {
@@ -73,43 +149,127 @@
 
         #tooltip {
             position: fixed;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.9);
             color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
+            padding: 8px 16px;
+            border-radius: 20px;
             pointer-events: none;
             display: none;
             z-index: 1000;
+            font-size: 0.9em;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
 
         @media (max-width: 768px) {
-            #controls {
-                top: auto;
-                bottom: 20px;
-                right: 20px;
-                left: 20px;
-                max-width: none;
+            #mobile-controls-toggle {
+                display: block;
             }
+
+            #controls {
+                top: 0;
+                right: 0;
+                left: 0;
+                max-width: none;
+                border-radius: 0;
+                transform: translateY(-100%);
+                padding: 80px 20px 30px 20px;
+                height: auto;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+
+            #controls.active {
+                transform: translateY(0);
+            }
+
+            .control-group {
+                margin-bottom: 15px;
+            }
+
+            .control-group h3 {
+                font-size: 1.1em;
+            }
+
+            .control-group label {
+                font-size: 0.9em;
+            }
+
+            button {
+                padding: 10px 20px;
+                font-size: 0.9em;
+                min-width: 100px;
+            }
+
+            .button-group {
+                gap: 8px;
+            }
+        }
+
+        /* Custom scrollbar for mobile */
+        #controls::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #controls::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        #controls::-webkit-scrollbar-thumb {
+            background: rgba(76, 175, 80, 0.5);
+            border-radius: 3px;
+        }
+
+        #controls::-webkit-scrollbar-thumb:hover {
+            background: rgba(76, 175, 80, 0.7);
         }
     </style>
 </head>
 
 <body>
     <div id="container"></div>
+    <button id="mobile-controls-toggle">Controls</button>
     <div id="controls">
         <div class="control-group">
             <h3>Planet Speeds</h3>
             <div id="speed-controls"></div>
         </div>
         <div class="control-group">
-            <button id="pause-btn">Pause</button>
-            <button id="theme-toggle">Toggle Theme</button>
+            <div class="button-group">
+                <button id="pause-btn">Pause</button>
+                <button id="theme-toggle">Toggle Theme</button>
+            </div>
         </div>
     </div>
     <div id="tooltip"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="main.js"></script>
+    <script>
+        // Mobile controls toggle
+        const mobileToggle = document.getElementById('mobile-controls-toggle');
+        const controls = document.getElementById('controls');
+
+        mobileToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            controls.classList.toggle('active');
+            mobileToggle.textContent = controls.classList.contains('active') ? 'Hide Controls' : 'Controls';
+        });
+
+        // Close controls when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!controls.contains(event.target) && !mobileToggle.contains(event.target)) {
+                controls.classList.remove('active');
+                mobileToggle.textContent = 'Controls';
+            }
+        });
+
+        // Prevent controls from closing when clicking inside
+        controls.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    </script>
 </body>
 
 </html>
